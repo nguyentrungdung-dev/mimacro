@@ -34,10 +34,18 @@ try {
           q.number,
           q.familyKey,
           review ? "needs_review" : "validated",
-          q,
+          { ...q, version: 1 },
         ],
       );
     }
+    // Future imports also retain their initial snapshot after migration 003.
+    for (const q of data.questions)
+      await c.query(
+        `INSERT INTO question_revisions(question_id,version,content,status,reason)
+      SELECT id,version,content,status,'Bản nhập ban đầu; chưa nghiệm thu học thuật toàn bộ' FROM questions
+      WHERE id=$1 AND version=1 ON CONFLICT DO NOTHING`,
+        [q.id],
+      );
     for (const m of data.media)
       await c.query(
         "INSERT INTO media(id,relative_path,mime) VALUES($1,$2,$3) ON CONFLICT(id) DO NOTHING",

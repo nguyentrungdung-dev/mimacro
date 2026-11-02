@@ -1,6 +1,6 @@
-# Kiến trúc mục tiêu
+# Kiến trúc và luồng chính
 
-Ngày cập nhật: 02/11/2026. Tài liệu mô tả kiến trúc mục tiêu. Mốc nền đã có Next.js 16.4.2, PostgreSQL local qua pg, migration, auth/session riêng, parser Frank và exam engine; xem PROGRESS và LOCAL_DEVELOPMENT cho bằng chứng/giới hạn. Các module AI, billing, job nền và quản trị dưới đây vẫn là mục tiêu chưa triển khai.
+Next.js/React/TypeScript, Node.js, PostgreSQL qua pg. Đã có tài khoản/phiên, parser Frank, exam engine và quản trị ngân hàng; AI, thanh toán và tác vụ nền bên dưới là thiết kế mục tiêu. Trạng thái thực ở PROGRESS.md, lệnh chạy ở README.
 
 ## Cấu trúc tổng thể
 
@@ -78,24 +78,26 @@ Mỗi job có loại tác vụ, đối tượng đích, trạng thái, số lầ
 
 Tách đơn hàng, giao dịch và quyền sử dụng. Xác thực webhook theo phương thức SePay đã cấu hình, kiểm tra tài khoản nhận tiền, chiều giao dịch, tiền tệ/số tiền và mã đơn. Giao dịch đã xử lý có khóa duy nhất; webhook lặp không cộng thời hạn lần hai. Đơn sai tiền hoặc không khớp vào hàng đối soát, không cấp quyền tự động. Gia hạn dựa trên một chính sách chu kỳ đã chốt ở O04.
 
-## Lựa chọn triển khai
+## Trải nghiệm sử dụng
 
-Ưu tiên mới ngày 02/11: dùng stack lõi tương tự Vui Học. Đề xuất Next.js App Router + React + TypeScript trên Node.js, CSS/Lucide và Zod; giữ UI độc lập theo taste-skill. OpenRouter đã chốt. Vui Học dùng PostgreSQL qua pg, cấu hình cloud Neon, Vercel Blob Private và Workflow SDK; đó là hiện trạng tham khảo, không tự động là nhà cung cấp của dự án mới.
+- Catalog lọc bốn nhóm môn/ngôn ngữ; nhóm thiếu nguồn hiện chưa có nội dung. Chính sách năm đề khách/gói chưa được chốt chi tiết thì không giả có quyền.
+- Luyện tập phản hồi đúng câu sau gửi; thi thử chỉ mở đáp án sau kết thúc. Lỗi mạng giữ lựa chọn chưa lưu và hiển thị trạng thái thật; xác nhận nộp nêu số câu bỏ trống.
+- Kết quả/tiến trình phân biệt điểm đã có, pending, lần đầu và làm lại; nhận định chủ đề kèm số quan sát. Phân biệt lần đầu/làm lại còn phải triển khai.
+- Upload bài vẽ mục tiêu: gắn từng ý, xem trước/xoay/thay/xóa trước nộp, giữ thứ tự trang PDF; lỗi mờ/thiếu trang báo cụ thể. Định hướng JPG/PNG/WebP/PDF, giới hạn theo O07. Chấm nhận file ảnh thật, không chỉ mô tả văn bản.
+- Màn thi ưu tiên câu/công thức/hình/ô trả lời/trạng thái lưu; bảng/hình rộng xử lý trong vùng riêng. Kiểm tra 1440/768/390, bàn phím, focus và trạng thái trống/tải/lỗi theo taste-skill. Không tự dùng logo NEU hoặc thông điệp bảo chứng.
 
-Không dùng dịch vụ database cá nhân đang có hoặc thông tin kết nối của Vui Học. Công ty đã xác nhận dùng PostgreSQL; version, quyền tạo database/schema riêng và mạng kết nối sẽ kiểm tra khi chuyển. Dùng SQL/migration chuẩn, tách DATABASE_URL và tránh extension độc quyền; khi chuyển vẫn phải xuất/nhập dữ liệu, kiểm tra version/quyền/TLS và thử phục hồi. Development dùng một PostgreSQL riêng trên máy, không tự kết nối production công ty hoặc DB Vui Học.
+## Database và triển khai
 
-Đã xác nhận tiếp ngày 02/11: công ty dùng PostgreSQL; người dùng muốn chạy trên máy trước và cho phép chọn cách thuận tiện. Đề xuất dùng PostgreSQL local riêng với driver pg; cách cài/chạy và version kiểm tra theo công cụ thực trên máy. Không cần kết nối công ty để bắt đầu. File development có thể lưu trong thư mục riêng được cấu hình và bảo vệ qua backend; kho production sẽ chọn sau. Giữ adapter/config riêng và migration để chuyển DB/file có kiểm tra, không hứa chỉ đổi biến môi trường là hoàn tất di chuyển.
+Mọi thao tác DB dùng DATABASE_URL trong .env.local, kể cả phát triển và kiểm thử tích hợp; không chạy DB local riêng hoặc tự đổi đích. Không dùng dữ liệu/tài khoản DB Vui Học. Giữ URL/khóa ngoài log và commit. Migration SQL có checksum, khóa transaction; không sửa migration đã áp.
 
-Stack lõi theo hướng Next.js/React/TypeScript; auth, cơ chế job cụ thể và kho file production còn mở. Trước khi dựng ứng dụng lớn, kiểm chứng luồng local: đăng nhập, ghi DB, tải file riêng tư, tác vụ nền, gọi OpenRouter và khôi phục phiên làm bài. Webhook HTTPS và giới hạn nền tảng kiểm chứng trước tích hợp SePay/deploy thật.
+Hình bank hiện lưu bytea trong PostgreSQL (MEDIA_STORAGE=postgres), chỉ phục vụ sau kiểm quyền. Không coi đây là kho upload bài làm. Chưa chọn kho production cho bài làm hoặc hoàn tất job nền. Không dùng filesystem tạm serverless để lưu dữ liệu bền vững.
 
-Ưu tiên không phí hạ tầng trong thử nghiệm nhưng kiểm tra điều kiện dùng thương mại, giới hạn request/CPU, dung lượng file và tác vụ nền. Nhập nhiều DOCX/PDF có thể cần công cụ xử lý trên máy xây dựng trước khi đưa dữ liệu chuẩn vào dịch vụ. Đây là công cụ nhập liệu, không phải AI local. Nếu website admin nhập trực tiếp dùng đường xử lý khác, phải dùng chung hợp đồng nội dung và kiểm tra.
-
-Không coi máy công ty 8 GB là đích bắt buộc. Không dùng filesystem tạm của serverless làm nơi lưu nguồn/bài làm bền vững. Cấu hình môi trường và migration phải tái lập được; tách test và production.
+Chưa deploy public. Hosting phải phù hợp sử dụng thương mại, HTTPS, network/TLS DB, giới hạn pool/CPU/job và ngân sách. Sao lưu và kiểm chứng phục hồi trước mở thử nghiệm; không coi việc DB từ xa chạy được là đã có deploy/backup đầy đủ. Các script smoke cũ bị khóa vào local không được dùng; smoke:workspace đã dùng DB cấu hình với fixture riêng và dọn đúng ID test.
 
 ## Kiểm soát dữ liệu
 
 File nguồn, bài làm và đáp án riêng tư; mọi lần lấy file kiểm tra quyền hoặc dùng URL ngắn hạn phù hợp. Nội dung trích từ tài liệu và bài làm không có quyền thay đổi chỉ dẫn hệ thống. Log kỹ thuật không chứa khóa bí mật hoặc toàn bộ bài làm không cần thiết. Admin sửa/quyết định/chấm lại đều có lịch sử. Có cơ chế sao lưu và kiểm tra phục hồi trước mở thử nghiệm.
 
-## Cấu hình thử Vercel 02/11
+## Khu quản trị
 
-Đã chuẩn bị Next.js trên Vercel với PostgreSQL bên ngoài; chưa có deploy cloud. Hình bank nhỏ có thể lưu bytea riêng tư trong DB theo T14, không phụ thuộc filesystem serverless hoặc thêm nhà cung cấp storage. Upload bài làm và job nền vẫn chưa triển khai. Xem VERCEL_DEPLOYMENT.md.
+Tách điều hướng và kiểm quyền admin khỏi learner ở cả client và API. Admin chỉ xem trước đề quản trị, không tạo attempt; managed_exams giữ snapshot/version/trạng thái và được kiểm tra lại version/status câu khi phát hành và khi người học bắt đầu. source_uploads là hàng đợi nhập có file gốc private trong DB; parser Python đồng bộ có timeout, claim/retry quá hạn, bulk transaction và chống trùng hash. Đổi role/khóa có audit và thu hồi phiên; khóa theo account, không phải chặn danh tính khách qua mọi thiết bị. content_reports nhận đúng câu/attempt của chủ bài. admin_audit giữ lý do và đối tượng thao tác. ai_usage mới là nơi ghi nhận usage, gateway ghi usage thật còn chưa kết nối. Không giả có đơn hàng/quyền gói khi SePay chưa triển khai.

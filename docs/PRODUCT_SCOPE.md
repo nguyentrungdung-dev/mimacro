@@ -20,7 +20,7 @@ Sinh viên tạo được đề mới tương tự bằng cách ghép các câu 
 | S06 | Tự luận nhập văn bản, AI chấm điểm chính thức theo rubric | Bắt buộc |
 | S07 | Tải ảnh/PDF bài vẽ cho từng ý đồ thị, AI đọc và chấm | Đã bổ sung vào MVP |
 | S08 | Điểm, lịch sử, tiến trình cá nhân, chủ đề cần ôn | Bắt buộc |
-| S09 | Đăng ký, đăng nhập, phân quyền khách/thành viên/trả phí/admin | Bắt buộc |
+| S09 | Đăng ký, đăng nhập, phân quyền khách/thành viên/trả phí/admin; admin chỉ quản trị, không làm bài | Bắt buộc |
 | S10 | Khách làm 5 đề có sẵn, mỗi đề 1 lần; không cần tài khoản | Đã chốt; chi tiết lượt còn mở |
 | S11 | Thu phí 150.000 đồng/tháng, thanh toán online; dự kiến SePay | Đã chốt giá; quyền/hạn mức và cách tính tháng còn mở |
 | S12 | Admin tải tài liệu, sửa câu/đáp án, xem lỗi, tạo đề, quản lý người dùng và chi phí | Đã chốt |
@@ -52,4 +52,4 @@ Sinh viên chọn và hoàn thành một đề; thi thử được chấm và gi
 - Mốc mục tiêu 06/11/2026. Nhập toàn bộ ngân hàng là khối lượng chưa xác định; tách tiến độ nội dung và tiến độ phần mềm.
 - Mục tiêu ngân sách OpenRouter: nhập liệu dưới 10 USD; vận hành ban đầu khoảng 5 USD/tháng. Đây là ngân sách mong muốn, chưa phải chi phí được xác nhận.
 - Ưu tiên hạ tầng miễn phí, chưa cần tên miền riêng. Không lựa chọn gói miễn phí có điều kiện sử dụng xung đột với sản phẩm thu phí.
-- Cập nhật 02/11: stack lõi giống Vui Học; công ty đã xác nhận dùng PostgreSQL. Phát triển bằng cụm PostgreSQL riêng trên máy trước; không dùng dịch vụ PostgreSQL/Neon cá nhân cũ hoặc DB Vui Học, chưa kết nối DB công ty.
+- Chỉ thị hiện hành 02/11: stack lõi Next.js/React/TypeScript, PostgreSQL. Mọi công việc dùng DB đang cấu hình trong .env.local; không dùng DB local riêng hoặc dữ liệu DB Vui Học. Cách làm local trước đây đã được thay thế.

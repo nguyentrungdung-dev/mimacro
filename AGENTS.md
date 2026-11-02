@@ -6,6 +6,13 @@ Xây MVP học và ôn thi Micro/Macro theo yêu cầu đã thống nhất, tậ
 
 Không xem đề xuất hoặc ô chưa chốt trong tài liệu là yêu cầu đã được người dùng phê duyệt. Tự quyết chi tiết triển khai có thể đảo ngược trong phạm vi đã có; ghi quyết định kỹ thuật. Không tự đặt chính sách trả phí, tỷ lệ câu AI hoặc giới hạn người dùng rồi mô tả chúng là đã thống nhất.
 
+## Database và tài liệu — chỉ thị hiện hành 02/11/2026
+
+- Mọi thao tác database (phát triển, migration, nhập liệu, quản trị, kiểm thử tích hợp) dùng DATABASE_URL đang cấu hình trong .env.local. Không dùng cụm PostgreSQL local riêng, không chạy npm run local, db:init hoặc db:start, không tự đổi đích kết nối. Chỉ thay khi người dùng yêu cầu rõ.
+- Không bỏ các chặn an toàn của script kiểm thử cũ để chạy fixture vào DB cấu hình. Điều chỉnh bài kiểm tra cho đúng đích và cô lập dữ liệu; giữ nguyên dữ liệu người dùng. Unit tests không cần DB vẫn chạy bình thường.
+- Báo cáo thay đổi, kiểm thử và giới hạn trong chat. Không tự tạo file docs, báo cáo, nhật ký hoặc hướng dẫn riêng sau mỗi lần thêm code.
+- Ưu tiên cập nhật/gộp vào README và bảy tài liệu nền đang giữ. Chỉ thêm tài liệu mới khi nội dung thật sự cần dùng lâu dài và không phù hợp tài liệu hiện có, hoặc khi người dùng yêu cầu.
+
 ## Ranh giới công việc
 
 - Không xây offline, AI local, người học tải tài liệu nguồn, xuất đề PDF/in, chat gia sư, diễn đàn hoặc các tính năng ngoài phạm vi khi chưa có yêu cầu mới.
@@ -43,10 +50,10 @@ Không xem đề xuất hoặc ô chưa chốt trong tài liệu là yêu cầu 
 
 ## Tiến trình và xác minh
 
-Trước khi làm, chọn mục công việc trong docs/PROGRESS.md và đánh dấu đang làm. Khi xong, ghi file/thay đổi, cách kiểm tra, kết quả và giới hạn. Không đánh dấu xong nếu còn mock, dịch vụ chưa kết nối hoặc chỉ kiểm tra bằng mắt.
+Với công việc trong backlog, cập nhật trạng thái ngắn trong docs/PROGRESS.md khi trạng thái thực sự thay đổi; không thêm nhật ký hoặc báo cáo kiểm thử theo từng lượt code. Báo chi tiết kết quả và giới hạn trong chat. Không đánh dấu xong nếu còn mock, dịch vụ chưa kết nối hoặc chỉ kiểm tra bằng mắt.
 
 Kiểm thử phù hợp với thay đổi: nhập/ghép đáp án bằng mẫu chuẩn; hoán đổi lựa chọn; bộ tạo đề; thời hạn thi; quyền dữ liệu; rubric/chấm điểm; idempotency thanh toán. Không dùng API có phí trong test mặc định. Live test phải có hạn mức đã biết và ghi chi phí.
 
 Khi lỗi làm sai điểm hoặc đề: ưu tiên cô lập nội dung/tác vụ, giữ dữ liệu và bằng chứng, rồi sửa. Không xóa dữ liệu người dùng hay làm sạch nguồn để che lỗi.
 
-Thay đổi quy tắc phải được cập nhật cùng docs/DECISIONS.md và tài liệu liên quan. Không tạo bước xin phép mới cho các thao tác kỹ thuật thông thường đã thuộc phạm vi được giao.
+Thay đổi quy tắc lâu dài cập nhật ngắn trong docs/DECISIONS.md và đúng tài liệu liên quan; không chép cùng báo cáo vào nhiều file. Không tạo bước xin phép mới cho các thao tác kỹ thuật thông thường đã thuộc phạm vi được giao.

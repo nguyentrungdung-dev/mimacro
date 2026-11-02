@@ -77,6 +77,14 @@ Hai phát hiện đã ghi trong audit: Macro chương 3 câu 195 có dòng `90=4
 
 Chọn mẫu đại diện gồm câu text, bảng, ảnh, công thức, nhóm câu, đề nhiều phần và câu có lời giải bất nhất. Đối chiếu thủ công mẫu chuẩn với nguồn để có expected output; dùng số lượng Answer Key làm đối soát, không làm bằng chứng mọi câu đã đọc đúng. Tách mẫu dùng chỉnh prompt/parser khỏi mẫu nghiệm thu; giữ các biến thể cùng họ trong cùng nhóm để tránh đánh giá quá lạc quan.
 
-## Hình ngân hàng trong môi trường Vercel thử
+## Hình ngân hàng trong PostgreSQL
 
-Migration 002 bổ sung media.data (bytea) để phục vụ bank nhỏ từ PostgreSQL. `db:import-media` nhập bytes nguyên gốc, kiểm SHA-256 theo ID, chạy lại không ghi đè khác biệt và rollback toàn bộ khi lỗi. Không sửa nguồn hoặc trạng thái câu. Backend chỉ đọc bytes sau kiểm tra quyền lượt làm/mở lời giải. Đây không phải kho bài làm upload. Xem VERCEL_DEPLOYMENT.md.
+Migration 002 bổ sung media.data (bytea) để phục vụ bank nhỏ từ PostgreSQL. `db:import-media` nhập bytes nguyên gốc, kiểm SHA-256 theo ID, chạy lại không ghi đè khác biệt và rollback toàn bộ khi lỗi. Không sửa nguồn hoặc trạng thái câu. Backend chỉ đọc bytes sau kiểm tra quyền lượt làm/mở lời giải. Đây không phải kho bài làm upload. Dùng DB đang cấu hình trong .env.local.
+
+## Quản trị phiên bản đã triển khai 02/11
+
+Hướng dẫn thao tác ngắn ở README. Migration 003 lưu baseline và revision bất biến qua API; bản hiện hành ở questions. Sửa giữ ID/thứ tự lựa chọn, source ID/số câu, media và chapter; cho sửa nội dung/đáp án/lời giải/chủ đề kèm lý do. Sửa luôn chuyển chờ kiểm tra, bản lỗi vẫn lưu riêng với checks; HTML không an toàn bị chặn. Kiểm tra lại không sửa dữ kiện hoặc giải toán. Admin xác nhận nguồn và xử lý issue mới mở đủ điều kiện; issue giữ mô tả gốc và thêm thông tin xử lý. Không gọi OpenRouter và không nghiệm thu học thuật ngầm.
+
+## Nhập qua quản trị
+
+Migration 004 có source_uploads lưu nguyên bytes DOCX/hash/metadata/người gửi/trạng thái/báo cáo trong DB đang cấu hình. Giới hạn kỹ thuật file 25 MB, ZIP tối đa 2.000 entries/80 MB giải nén, mỗi part tối đa 30 MB; chặn traversal/encryption/DTD/entity/OMML và media không đọc được. Parser Python chạy với timeout 45 giây, không nhận chỉ thị từ nội dung hoặc gọi AI; output ghi bulk transaction vào sources/questions/media/revisions/issues, toàn bộ câu mới needs_review. File trùng không ghi đè; lỗi giữ file và báo cáo để thử lại, phiên processing quá hai phút có thể nhận lại. Chưa hỗ trợ DOC cũ/PDF/CLC nhiều phần/OMML hoặc ảnh trong lựa chọn. Đây không phải upload bài làm của người học; không áp các giới hạn này vào O07.

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { AdminWorkspace } from "./admin-workspace";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useCallback, useRef } from "react";
 import {
@@ -24,6 +25,14 @@ import type {
   HistoryRow,
 } from "@/lib/types";
 type Bootstrap = {
+  managedExams?: {
+    id: string;
+    title: string;
+    subject: string;
+    language: string;
+    minutes: number;
+    questions: number;
+  }[];
   user: UserView | null;
   sources: SourceView[];
   history: HistoryRow[];
@@ -115,11 +124,23 @@ export function App() {
     setMenu(false);
     setError("");
   }, [path]);
-  const nav = [
-    ["/", "Kho đề"],
-    ["/tao-de", "Tạo đề"],
-    ["/hanh-trinh", "Hành trình"],
-  ];
+  const nav = !data
+    ? []
+    : data?.user?.role === "admin"
+      ? [["/quan-tri", "Khu quản trị"]]
+      : [
+          ["/", "Kho đề"],
+          ["/tao-de", "Tạo đề"],
+          ["/hanh-trinh", "Hành trình"],
+        ];
+  useEffect(() => {
+    if (
+      data?.user?.role === "admin" &&
+      !path.startsWith("/quan-tri") &&
+      path !== "/tai-khoan"
+    )
+      router.replace("/quan-tri");
+  }, [data?.user?.role, path, router]);
   const active = tracks.find((t) => t.id === track)!;
   const sources =
     data?.sources.filter(
@@ -161,7 +182,11 @@ export function App() {
       </a>
       <header className="topbar">
         <div className="topbar-inner">
-          <Link href="/" className="brand" aria-label="Ôn MiMacro, về kho đề">
+          <Link
+            href={data?.user?.role === "admin" ? "/quan-tri" : "/"}
+            className="brand"
+            aria-label="Ôn MiMacro, về kho đề"
+          >
             <Mark />
             <span>Ôn MiMacro</span>
           </Link>
@@ -216,7 +241,7 @@ export function App() {
           <div className="empty-state">
             <h1>Chưa kết nối được kho đề</h1>
             <p>
-              Kiểm tra PostgreSQL local rồi thử lại. Không có dữ liệu giả thay
+              Kiểm tra kết nối database rồi thử lại. Không có dữ liệu giả thay
               cho ngân hàng.
             </p>
             <button onClick={load}>
@@ -225,7 +250,13 @@ export function App() {
           </div>
         ) : (
           <>
-            {attemptId ? (
+            {(data.user?.role === "admin" && path !== "/tai-khoan") ||
+            path.startsWith("/quan-tri") ? (
+              <AdminWorkspace
+                user={data.user}
+                path={path.startsWith("/quan-tri") ? path : "/quan-tri"}
+              />
+            ) : attemptId ? (
               <Exam id={attemptId} onError={setError} onComplete={load} />
             ) : path === "/tao-de" ? (
               <>
@@ -268,6 +299,56 @@ export function App() {
                   setTrack={setTrack}
                   sources={data.sources}
                 />
+                {!!data.managedExams?.filter(
+                  (e) =>
+                    e.subject === active.subject &&
+                    e.language === active.language,
+                ).length && (
+                  <section className="panel managed-catalog">
+                    <h2>Đề do quản trị phát hành</h2>
+                    {data.managedExams
+                      .filter(
+                        (e) =>
+                          e.subject === active.subject &&
+                          e.language === active.language,
+                      )
+                      .map((e) => (
+                        <div className="admin-data-row" key={e.id}>
+                          <div>
+                            <h3>{e.title}</h3>
+                            <p>
+                              {e.questions} câu · {e.minutes} phút
+                            </p>
+                          </div>
+                          <div className="button-row">
+                            {(["practice", "exam"] as const).map((mode) => (
+                              <button
+                                className="secondary"
+                                key={mode}
+                                disabled={busy}
+                                onClick={async () => {
+                                  setBusy(true);
+                                  try {
+                                    const r = await api<{ id: string }>(
+                                      "attempts",
+                                      { managedExamId: e.id, mode },
+                                    );
+                                    router.push("/bai-lam/" + r.id);
+                                  } catch (err) {
+                                    setError((err as Error).message);
+                                  } finally {
+                                    setBusy(false);
+                                  }
+                                }}
+                              >
+                                {mode === "exam" ? "Thi thử" : "Luyện tập"}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                  </section>
+                )}
                 <div className="catalog-layout">
                   <section
                     className="panel catalog-panel"
@@ -772,6 +853,7 @@ function Exam({
   onError: (s: string) => void;
   onComplete: () => Promise<void>;
 }) {
+  const [reportMessage, setReportMessage] = useState("");
   const [attempt, setAttempt] = useState<AttemptView | null>(null),
     [index, setIndex] = useState(0),
     [selections, setSelections] = useState<Record<string, string>>({}),
@@ -1063,6 +1145,41 @@ function Exam({
               </button>
             )}
           </div>
+          <details className="learner-report">
+            <summary>Báo lỗi câu hỏi</summary>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const form = e.currentTarget;
+                const f = new FormData(form);
+                try {
+                  await api("reports", {
+                    attemptId: id,
+                    questionId: q.id,
+                    detail: f.get("detail"),
+                  });
+                  form.reset();
+                  setReportMessage("Đã gửi phản hồi cho quản trị.");
+                } catch (err) {
+                  setReportMessage((err as Error).message);
+                }
+              }}
+            >
+              <label className="field">
+                Nội dung cần kiểm tra
+                <textarea
+                  name="detail"
+                  minLength={8}
+                  maxLength={2000}
+                  required
+                />
+              </label>
+              <button className="secondary" type="submit">
+                Gửi phản hồi
+              </button>
+              <p role="status">{reportMessage}</p>
+            </form>
+          </details>
           <p className="source-caption">
             Nguồn: {q.sourceTitle} · Câu {q.number}
           </p>
@@ -1304,12 +1421,16 @@ function Account({
           <h2>{user.displayName}</h2>
           <p>@{user.username}</p>
           <p>
-            Các lượt làm mới được lưu vào tài khoản này. Gói trả phí chưa được
-            mở trong bản phát triển.
+            {user.role === "admin"
+              ? "Tài khoản chỉ quản trị nội dung và vận hành, không có quyền làm bài."
+              : "Các lượt làm mới được lưu vào tài khoản này. Gói trả phí chưa được mở."}
           </p>
           <div className="button-row">
-            <Link className="button" href="/hanh-trinh">
-              Xem hành trình
+            <Link
+              className="button"
+              href={user.role === "admin" ? "/quan-tri" : "/hanh-trinh"}
+            >
+              {user.role === "admin" ? "Vào khu quản trị" : "Xem hành trình"}
               <ArrowUpRight size={16} />
             </Link>
             <button

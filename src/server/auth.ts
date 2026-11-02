@@ -22,7 +22,7 @@ export async function currentActor(create = false): Promise<Actor | null> {
   if (token && /^[a-f0-9]{64}$/.test(token)) {
     const hash = digest(token);
     const r = await pool().query(
-      `SELECT u.id,u.username,u.display_name,u.role FROM sessions s LEFT JOIN users u ON u.id=s.user_id WHERE s.token_hash=$1 AND s.expires_at>now()`,
+      `SELECT u.id,u.username,u.display_name,u.role FROM sessions s LEFT JOIN users u ON u.id=s.user_id WHERE s.token_hash=$1 AND s.expires_at>now() AND (u.id IS NULL OR u.is_active)`,
       [hash],
     );
     if (r.rowCount) {
@@ -121,7 +121,11 @@ export async function authenticate(
       row?.password_hash || "missing:" + "00".repeat(64)
     ).split(":");
     const key = (await scrypt(password, salt, 64)) as Buffer;
-    if (!row || !timingSafeEqual(key, Buffer.from(stored, "hex")))
+    if (
+      !row ||
+      !row.is_active ||
+      !timingSafeEqual(key, Buffer.from(stored, "hex"))
+    )
       throw new AppError("Tên đăng nhập hoặc mật khẩu không đúng.", 401);
     user = {
       id: row.id,

@@ -2,7 +2,13 @@ import { randomUUID } from "node:crypto";
 import type { PoolClient } from "pg";
 import { pool, transaction } from "./db";
 import type { Actor } from "./auth";
-import { AppError, grade, publicQuestions, selectBalanced } from "../lib/exams";
+import {
+  AppError,
+  grade,
+  publicQuestions,
+  selectBalanced,
+  checkLearner,
+} from "../lib/exams";
 import type {
   Question,
   AnswerRecord,
@@ -55,6 +61,7 @@ export async function createAttempt(
     choicePercent: number;
   },
 ) {
+  checkLearner(actor.user);
   if (input.choicePercent !== 100)
     throw new AppError(
       "Kho đã nhập hiện chỉ có câu trắc nghiệm; chưa đủ dữ liệu cho tỷ lệ dạng bài này.",
@@ -123,6 +130,7 @@ function owns(r: Row, a: Actor) {
   return r.user_id ? r.user_id === a.user?.id : r.session_hash === a.hash;
 }
 async function locked(c: PoolClient, id: string, actor: Actor): Promise<Row> {
+  checkLearner(actor.user);
   const r = (
     await c.query("SELECT * FROM attempts WHERE id=$1 FOR UPDATE", [id])
   ).rows[0] as Row | undefined;

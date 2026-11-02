@@ -1,6 +1,6 @@
 # Tiêu chí nghiệm thu MVP
 
-Ngày cập nhật: 02/11/2026. Các mục dưới đây là yêu cầu nghiệm thu toàn bộ MVP. Mốc nền local đã có bằng chứng cho các luồng trắc nghiệm, lưu bài, quyền, tài khoản và UI trong [VERIFICATION](VERIFICATION.md); chưa đồng nghĩa toàn bộ tiêu chí dưới đây đã đạt. Mỗi kết quả cần môi trường, phiên bản, dữ liệu kiểm thử, expected/actual và bằng chứng. Mock không thay thế kiểm thử dịch vụ thật.
+Ngày cập nhật: 02/11/2026. Đây là tiêu chí nghiệm thu toàn bộ MVP, không phải báo cáo đã đạt. Trạng thái ở PROGRESS.md; kết quả mỗi đợt báo trong chat, kèm môi trường, phiên bản, dữ liệu, expected/actual và giới hạn. Mock không thay kiểm thử dịch vụ thật. Kiểm thử tích hợp dùng DB đang cấu hình, không dùng DB local riêng.
 
 ## Từ dữ liệu đến đề hợp lệ
 

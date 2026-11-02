@@ -20,7 +20,11 @@
     "db:migrate": "node --import tsx scripts/migrate.ts",
     "db:import": "node --import tsx scripts/import-bank.ts",
     "verify": "npm test && npm run typecheck && npm run build",
-    "db:import-media": "node --import tsx scripts/import-media.ts"
+    "db:import-media": "node --import tsx scripts/import-media.ts",
+    "admin:role": "node --import tsx scripts/admin-role.ts",
+    "smoke:admin": "node scripts/smoke-admin.mjs",
+    "local": "node scripts/with-local-db.mjs",
+    "smoke:workspace": "node scripts/smoke-admin-workspace.mjs"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",

@@ -1,6 +1,6 @@
 # Quyết định và điểm còn mở
 
-Ngày cập nhật: 02/11/2026. “Đã chốt” là yêu cầu người dùng; “Định hướng” là đề xuất kiến trúc đã trình bày và được tiếp tục dùng làm nền; “Còn mở” chưa được phép biến thành chính sách ngầm.
+Ngày cập nhật: 02/11/2026. Chỉ giữ quyết định còn hiệu lực và thông tin cần chốt; yêu cầu hiện tại của người dùng ưu tiên hơn hướng cũ. Yêu cầu sản phẩm đầy đủ ở PRODUCT_SCOPE.md.
 
 ## Quyết định sản phẩm
 
@@ -18,31 +18,23 @@ Ngày cập nhật: 02/11/2026. “Đã chốt” là yêu cầu người dùng;
 | D10 | Đã chốt | 5 đề khách, 1 lần mỗi đề | Chi tiết phân bổ và tiêu thụ lượt còn mở |
 | D11 | Đã chốt | Không cho tải đề gốc, không xuất PDF/in | File nguồn lưu riêng tư |
 | D12 | Đã chốt | Đáp án CLC sẽ được gửi bổ sung | Hiện chỉ dùng file đó khảo sát định dạng, chưa đủ căn cứ chấm |
-| D13 | Đã chốt | Dùng taste-skill người dùng chỉ định | Gói nằm tại ../.agents/skills/taste-skill |
+| D13 | Đã chốt | Dùng taste-skill người dùng chỉ định | Gói nằm tại .agents/skills/taste-skill |
 
-## Định hướng kỹ thuật
+## Kỹ thuật và cách làm hiện hành
 
-| ID | Trạng thái | Định hướng | Lý do |
-| --- | --- | --- | --- |
-| T01 | Định hướng | Một ứng dụng có module; tác vụ AI/nhập liệu chạy nền | Phù hợp quy mô thử nghiệm và thời hạn |
-| T02 | Định hướng | Tách môn bằng dữ liệu và bộ quy tắc, không microservice từng môn | Giới hạn ngữ cảnh AI mà không tăng chi phí vận hành |
-| T03 | Định hướng | Đọc cấu trúc DOCX trước OCR/vision | Mẫu Frank có văn bản và đáp án đọc được trực tiếp |
-| T04 | Định hướng | Bộ chấm trắc nghiệm độc lập AI | Tính đúng ổn định và giảm chi phí |
-| T05 | Còn mở một phần | Phiên bản stack, auth, storage, hosting và tác vụ nền | Stack lõi theo T08, engine/dev DB theo T09–T10; phải kiểm chứng trên đích triển khai |
-| T06 | Còn mở | Model cụ thể theo nhập liệu/sinh câu/review/chấm ảnh | Chọn qua mẫu thật, giá và giới hạn đang áp dụng |
-| T07 | Đã chốt ràng buộc 02/11 | Không dùng database PostgreSQL/Neon cá nhân của chủ sản phẩm cho Ôn MiMacro; ưu tiên database do công ty quản lý | Không sao chép DATABASE_URL hay dùng chung bảng/tài khoản DB của Vui Học |
-| T08 | Đã triển khai local 02/11 theo lệnh bắt đầu code | Next.js 16.4.2, React 19.2, TypeScript, Node.js 24, CSS/Lucide, Zod; OpenRouter là tích hợp dự kiến | package-lock khóa phụ thuộc; UI theo taste-skill; chưa có code AI, không kéo TTS/video vào phạm vi |
-| T09 | Đã xác nhận và dựng local 02/11 | Công ty dùng PostgreSQL; cụm local riêng PostgreSQL 15.14 qua pg, cổng 55438, DB mimacro | Chưa kết nối công ty; hosting/file/job cloud còn mở |
-| T10 | Đã triển khai local 02/11 | Migration SQL có checksum và khóa transaction; cấu hình kết nối/file tách riêng | Không dùng dịch vụ DB cá nhân cũ. Không truy cập DB công ty khi chưa được cấp cấu hình/quyền |
-| T11 | Quyết định kỹ thuật local 02/11 | Phiên opaque có token hash trong DB; mật khẩu scrypt + salt; dùng session cookie HttpOnly | Không phụ thuộc auth cloud. Đăng xuất thu hồi bằng expires_at để giữ tham chiếu lịch sử |
-| T12 | Quyết định kỹ thuật local 02/11 | File media private ở .local/storage; chỉ serve hình gắn lượt làm của người có quyền | Kho production/ảnh bài làm/upload quản trị chưa làm. Không đóng gói thư mục riêng tư vào build |
-| T13 | Quyết định kỹ thuật local 02/11 | Bộ trộn chia đều số câu theo chương, chống trùng chính xác qua stem/options/media; độ khó chưa gán | Phân bổ là baseline có thể đổi, không phải chuẩn đề NEU đã được giáo sư nghiệm thu; họ biến thể ngữ nghĩa chưa có |
-
-Stack và auth local đã thực hiện theo T08–T12. Cloudflare, D1, R2, Vercel Blob hoặc Workflow SDK chưa được chọn chỉ vì từng được nêu trong trao đổi. Khi chọn stack triển khai public/job nền, ghi bằng chứng chạy luồng mẫu, giới hạn chi phí và lý do tại đây. Có thể tự chọn chi tiết kỹ thuật trong phạm vi được giao mà không hỏi lại từng thư viện.
-
-## Chuẩn bị Vercel ngày 02/11/2026
-
-T14 — Theo yêu cầu người dùng, chuẩn bị app để deploy Vercel; chưa chọn gói, tạo tài nguyên hay deploy live. Giữ PostgreSQL riêng; bổ sung tùy chọn MEDIA_STORAGE=postgres cho hình bank nhỏ (43 hình, khoảng 944 KB). Bytes lưu qua migration bổ sung, đối chiếu hash khi nhập; quyền xem hình giữ ở backend. Local vẫn đọc filesystem. Không dùng cách này để coi upload bài làm đã hoàn thành. APP_ORIGIN bắt buộc HTTPS trên Vercel; pool nhỏ và idle timeout cho bản test. Chi tiết và giới hạn ở VERCEL_DEPLOYMENT.md. Không thay đổi T07 hoặc điều kiện dùng thương mại của Vercel.
+| ID | Quyết định | Hệ quả |
+| --- | --- | --- |
+| T01–T02 | Một ứng dụng tách module, phân môn bằng dữ liệu | Không thêm agent điều phối/microservice/vector DB khi chưa có nhu cầu |
+| T03–T04 | Đọc cấu trúc DOCX trước OCR; chấm trắc nghiệm bằng code | Không đoán đáp án hoặc gọi AI chỉ để so lựa chọn |
+| T05/T08 | Next.js 16.4.2, React 19.2, TypeScript, Node.js 24, pg, Zod, CSS/Lucide | Hosting public và job nền chưa hoàn tất; OpenRouter chưa kết nối |
+| T06 | Model AI còn mở | Chọn theo mẫu thật, giá và hạn mức; không coi model chưa thử là đã chọn |
+| T11 | Phiên opaque, token hash trong DB; scrypt + salt; cookie HttpOnly | Backend xác nhận danh tính/quyền; role không lấy từ client |
+| T13 | Bộ trộn chia đều chương, chống trùng chính xác, xáo stable option ID | Baseline kỹ thuật, chưa phải chuẩn NEU; độ khó/họ gần nghĩa còn thiếu |
+| T14/T19 | MEDIA_STORAGE=postgres, hình bank private trong DB | 43 hình đã chuyển; upload bài làm là phần riêng chưa triển khai |
+| T16 | Bản hiện hành ở questions, snapshot ở question_revisions; khóa transaction + expectedVersion | Giữ baseline và revision; sửa bank không tự sửa/chấm lại lịch sử |
+| T17 | Sửa thủ công chuyển needs_review; mở lại cần kiểm tra cấu trúc và xác nhận nguồn/issue | Không thay quy trình tự kiểm định câu AI D06; không coi kiểm tra code là nghiệm thu học thuật |
+| T18–T20 | Theo chỉ thị mới, **mọi công việc dùng DATABASE_URL trong .env.local; không dùng DB local riêng** | Đã áp 001–003 và chuyển adminsci, giữ mật khẩu; không chuyển dữ liệu smoke/phiên local. Thay thế hướng DB local T09–T10/T15 và giới hạn đích cũ của T07; vẫn không dùng dữ liệu Vui Học |
+| T21 | Theo chỉ thị mới, báo kết quả trong chat; không tự sinh docs theo mỗi lần code | Giữ bảy tài liệu nền, gộp hướng dẫn vào README; chỉ thêm file khi có giá trị sử dụng lâu dài hoặc người dùng yêu cầu |
 
 ## Điểm cần chốt trước chức năng phụ thuộc
 
@@ -57,11 +49,9 @@ T14 — Theo yêu cầu người dùng, chuẩn bị app để deploy Vercel; ch
 | O07 | Giới hạn ảnh/PDF, số trang, thời gian lưu file, quy trình chấm lại | Chủ sản phẩm + người xây dựng; trước mở upload | Giao diện và pipeline có cấu hình |
 | O08 | Ngưỡng nghiệm thu điểm AI so với giáo sư, bộ bài vẽ thật | Giáo sư + chủ sản phẩm; trước công bố AI chấm đạt chuẩn | Chuẩn bị đánh giá, log và bảng đối chiếu |
 | O09 | Tài khoản SePay, tài khoản nhận tiền, hình thức tích hợp và kiểm thử | Chủ sản phẩm; trước thanh toán live | Mock, webhook, đối soát và sandbox nếu hỗ trợ |
-| O10 | Hosting/auth/storage, thông tin truy cập và ngân sách ngoài API; version/quyền/network DB công ty khi chuyển | Người xây dựng + chủ sản phẩm khi cần chi phí/quyền | Prototype local với PostgreSQL riêng; engine công ty đã xác nhận PostgreSQL |
+| O10 | Hosting/auth/storage, thông tin truy cập và ngân sách ngoài API; version/quyền/network DB công ty khi chuyển | Người xây dựng + chủ sản phẩm khi cần chi phí/quyền | Phát triển trên DB đang cấu hình; hosting public và phục hồi còn phải xác minh |
 | O11 | Phân bổ chương và chuẩn độ khó khi tạo đề; thời lượng theo cấu hình | Chủ sản phẩm/giáo sư; trước nghiệm thu bộ đề | Taxonomy theo nguồn, bộ phân bổ có ràng buộc |
 
 Không dùng dữ liệu giả để lấp O06; không tự mở bán khi O04/O09 chưa giải quyết. Điểm chưa chốt phải hiển thị là chưa cấu hình trong quản trị, không tạo gói “không giới hạn” ngầm.
 
-## Cách ghi thay đổi
-
-Mỗi quyết định mới có ngày, nguồn quyết định, trạng thái, lựa chọn, lý do, ảnh hưởng đến phạm vi/chi phí/dữ liệu và ID yêu cầu liên quan. Khi thay thế quyết định, đánh dấu bản cũ là đã thay thế và liên kết bản mới. Đồng bộ PRODUCT_SCOPE, ACCEPTANCE và PROGRESS trong cùng thay đổi có liên quan.
+D14 — 02/11/2026, chỉ thị người dùng: admin chỉ quản trị, không được tạo/làm/nộp bài dưới vai trò admin. Tách điều hướng và chặn backend. Admin tải bank DOCX, xử lý câu lỗi/chưa duyệt, sửa và phát hành có phiên bản. Không suy diễn yêu cầu này thành bắt duyệt tay mọi câu AI đã qua kiểm định; D06 vẫn áp dụng cho câu đạt kiểm định.

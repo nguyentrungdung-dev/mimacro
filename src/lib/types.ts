@@ -1,6 +1,7 @@
 export type Subject = "micro" | "macro";
 export type Option = { id: string; text: string; html?: string };
 export type Question = {
+  version?: number;
   id: string;
   number: number;
   html: string;

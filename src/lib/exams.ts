@@ -7,6 +7,13 @@ export class AppError extends Error {
     super(message);
   }
 }
+export function checkLearner(user: { role: string } | null) {
+  if (user?.role === "admin")
+    throw new AppError(
+      "Tài khoản quản trị không có quyền làm bài. Dùng khu quản trị để quản lý nội dung.",
+      403,
+    );
+}
 export function shuffled<T>(items: T[], random = Math.random): T[] {
   const a = [...items];
   for (let i = a.length - 1; i > 0; i--) {
