@@ -1,0 +1,12 @@
+node_modules/
+.next/
+.local/
+.env*
+!.env.example
+*.tsbuildinfo
+data/imports/
+data/private/
+.taste-skill/inspect/
+.taste-skill/before/
+.taste-skill/after/
+.DS_Store

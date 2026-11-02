@@ -1,0 +1,10 @@
+.local
+.env*
+.agents
+.codex
+.taste-skill
+data
+docs
+tests
+scripts
+node_modules
