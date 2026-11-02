@@ -93,13 +93,21 @@ async function dispatch(req: NextRequest, parts: string[]) {
     }
     if (path === "bootstrap") {
       const actor = await currentActor(true);
+      const isAdmin = actor!.user?.role === "admin";
+      const [sources, recentHistory, topics, managedExams] = isAdmin
+        ? [[], [], [], []]
+        : await Promise.all([
+            catalog(),
+            history(actor!),
+            topicStats(actor!),
+            publishedExams(),
+          ]);
       return {
         user: actor!.user,
-        sources: actor!.user?.role === "admin" ? [] : await catalog(),
-        history: actor!.user?.role === "admin" ? [] : await history(actor!),
-        topics: actor!.user?.role === "admin" ? [] : await topicStats(actor!),
-        managedExams:
-          actor!.user?.role === "admin" ? [] : await publishedExams(),
+        sources,
+        history: recentHistory,
+        topics,
+        managedExams,
         environment: process.env.VERCEL ? "remote-test" : "local-development",
         commercialConfigured: false,
       };

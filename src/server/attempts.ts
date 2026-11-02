@@ -213,11 +213,11 @@ export async function submitAttempt(id: string, actor: Actor) {
 export async function history(actor: Actor): Promise<HistoryRow[]> {
   const r = actor.user
     ? await pool().query(
-        "SELECT * FROM attempts WHERE user_id=$1 ORDER BY started_at DESC LIMIT 100",
+        "SELECT id,title,mode,subject,status,started_at,score,question_count FROM attempts WHERE user_id=$1 ORDER BY started_at DESC LIMIT 100",
         [actor.user.id],
       )
     : await pool().query(
-        "SELECT * FROM attempts WHERE session_hash=$1 AND user_id IS NULL ORDER BY started_at DESC LIMIT 100",
+        "SELECT id,title,mode,subject,status,started_at,score,question_count FROM attempts WHERE session_hash=$1 AND user_id IS NULL ORDER BY started_at DESC LIMIT 100",
         [actor.hash],
       );
   return r.rows.map((r) => ({
