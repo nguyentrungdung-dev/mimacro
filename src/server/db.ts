@@ -1,4 +1,5 @@
 import { Pool, type PoolClient } from "pg";
+import { databaseUrl } from "./deployment";
 const globalDb = globalThis as unknown as { mimacroPool?: Pool };
 export function pool() {
   if (!process.env.DATABASE_URL)
@@ -6,7 +7,7 @@ export function pool() {
       "Chưa cấu hình DATABASE_URL. Chạy các bước khởi tạo database trong README.",
     );
   return (globalDb.mimacroPool ??= new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: databaseUrl(process.env.DATABASE_URL),
     max: process.env.VERCEL ? 2 : 5,
     idleTimeoutMillis: 5000,
     connectionTimeoutMillis: 5000,

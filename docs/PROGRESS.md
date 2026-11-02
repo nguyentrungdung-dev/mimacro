@@ -17,7 +17,7 @@ Có 10 nguồn Frank/1.741 câu, 1.739 đủ điều kiện cấu trúc và 2 ch
 | ID | Công việc | Trạng thái | Phần còn lại / giới hạn |
 | --- | --- | --- | --- |
 | P00–P03 | Yêu cầu, khảo sát mẫu, skill và tài liệu nền | done | Tài liệu nền đã gọn lại; không thay nghiệm thu nội dung |
-| P10 | Stack, hosting và triển khai | in_progress | Stack/DB đã có; chưa deploy public hoặc xác nhận gói hosting |
+| P10 | Stack, hosting và triển khai | in_progress | Stack/DB đã có; SSL đặt verify-full và chuẩn hóa alias cũ; chưa xác minh deploy public/gói hosting |
 | P11 | App, môi trường, schema/migration và quyền cơ bản | done | DB cấu hình đã áp 001–004 |
 | P12 | Parser Frank và mẫu đối chiếu | done | Đủ 1.741 câu/key; không phải kiểm định học thuật toàn bộ |
 | P13 | Parser đề nhiều phần, bảng, OMML, ảnh | in_progress | Frank giữ bảng/ảnh/sup/sub; CLC/OMML/nhiều đề chưa làm |

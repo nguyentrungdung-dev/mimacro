@@ -24,3 +24,27 @@ export function mediaStorage(
     throw new Error("Local media storage is unavailable on Vercel");
   return value;
 }
+
+/** Preserve pg 8's certificate + hostname verification for legacy SSL aliases.
+ * A URL explicitly opting into libpq compatibility keeps its chosen semantics.
+ */
+export function databaseUrl(value: string): string {
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    throw new Error("DATABASE_URL must be a valid PostgreSQL URL");
+  }
+  if (!["postgres:", "postgresql:"].includes(url.protocol))
+    throw new Error("DATABASE_URL must use PostgreSQL");
+  if (
+    url.searchParams.get("uselibpqcompat") !== "true" &&
+    ["prefer", "require", "verify-ca"].includes(
+      url.searchParams.get("sslmode") || "",
+    )
+  ) {
+    url.searchParams.set("sslmode", "verify-full");
+    return url.toString();
+  }
+  return value;
+}

@@ -55,3 +55,5 @@ Ngày cập nhật: 02/11/2026. Chỉ giữ quyết định còn hiệu lực v�
 Không dùng dữ liệu giả để lấp O06; không tự mở bán khi O04/O09 chưa giải quyết. Điểm chưa chốt phải hiển thị là chưa cấu hình trong quản trị, không tạo gói “không giới hạn” ngầm.
 
 D14 — 02/11/2026, chỉ thị người dùng: admin chỉ quản trị, không được tạo/làm/nộp bài dưới vai trò admin. Tách điều hướng và chặn backend. Admin tải bank DOCX, xử lý câu lỗi/chưa duyệt, sửa và phát hành có phiên bản. Không suy diễn yêu cầu này thành bắt duyệt tay mọi câu AI đã qua kiểm định; D06 vẫn áp dụng cho câu đạt kiểm định.
+
+T22 — Giữ xác minh chứng chỉ/hostname của pg bằng sslmode=verify-full. Chuẩn hóa alias prefer/require/verify-ca về verify-full nếu URL không chủ động chọn uselibpqcompat=true; giữ nguyên đích kết nối và các tham số khác. Không dùng rejectUnauthorized=false để bỏ cảnh báo.

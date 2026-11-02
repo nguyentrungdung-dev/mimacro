@@ -20,6 +20,8 @@ npm run db:migrate
 npm run admin:role -- ten_dang_nhap admin
 ```
 
+DATABASE_URL nên đặt `sslmode=verify-full` để xác minh chứng chỉ và hostname. Lớp kết nối giữ hành vi này cho URL dùng alias cũ của pg; không tắt xác minh SSL để dập cảnh báo. Khi deploy, áp cùng giá trị trong biến môi trường của hosting.
+
 Migration chỉ chạy khi có thay đổi schema; kiểm checksum và khóa transaction. Không sửa migration đã áp. Cấp role chỉ dành cho tài khoản đã đăng ký, qua CLI tin cậy. Tài khoản `adminsci` đã có trên DB cấu hình; thông tin đăng nhập nằm trong tệp riêng tư `.local/adminsci-credentials.txt`, không nằm trong mã nguồn.
 
 Kiểm tra code không cần DB:
