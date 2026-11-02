@@ -19,6 +19,7 @@ Ngày cập nhật: 02/11/2026. Chỉ giữ quyết định còn hiệu lực v�
 | D11 | Đã chốt | Không cho tải đề gốc, không xuất PDF/in | File nguồn lưu riêng tư |
 | D12 | Đã chốt | Đáp án CLC sẽ được gửi bổ sung | Hiện chỉ dùng file đó khảo sát định dạng, chưa đủ căn cứ chấm |
 | D13 | Đã chốt | Dùng taste-skill người dùng chỉ định | Gói nằm tại .agents/skills/taste-skill |
+| D15 | Đã chốt | Theo ảnh tham chiếu người dùng gửi 02/11: nền kem ngà, chữ màu mực, tiêu đề serif và bề mặt bo mềm | Áp dụng chung qua CSS tokens; tiêu đề kho đề lớn hơn, màn thi/quản trị giữ mật độ làm việc |
 
 ## Kỹ thuật và cách làm hiện hành
 
@@ -57,3 +58,5 @@ Không dùng dữ liệu giả để lấp O06; không tự mở bán khi O04/O0
 D14 — 02/11/2026, chỉ thị người dùng: admin chỉ quản trị, không được tạo/làm/nộp bài dưới vai trò admin. Tách điều hướng và chặn backend. Admin tải bank DOCX, xử lý câu lỗi/chưa duyệt, sửa và phát hành có phiên bản. Không suy diễn yêu cầu này thành bắt duyệt tay mọi câu AI đã qua kiểm định; D06 vẫn áp dụng cho câu đạt kiểm định.
 
 T22 — Giữ xác minh chứng chỉ/hostname của pg bằng sslmode=verify-full. Chuẩn hóa alias prefer/require/verify-ca về verify-full nếu URL không chủ động chọn uselibpqcompat=true; giữ nguyên đích kết nối và các tham số khác. Không dùng rejectUnauthorized=false để bỏ cảnh báo.
+
+T23 — Function Vercel đặt tại Singapore (sin1), gần DB cấu hình ap-southeast-1; không chuyển đích DB. Bootstrap chạy song song các truy vấn độc lập sau xác thực, lịch sử chỉ lấy cột hiển thị; pool dùng attachDatabasePool của Vercel, giữ giới hạn 2 kết nối/instance và idle timeout 5 giây để thu hồi trước suspension. Không cache công khai dữ liệu phiên/người dùng.

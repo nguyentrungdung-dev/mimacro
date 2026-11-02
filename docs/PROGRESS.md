@@ -17,7 +17,7 @@ Có 10 nguồn Frank/1.741 câu, 1.739 đủ điều kiện cấu trúc và 2 ch
 | ID | Công việc | Trạng thái | Phần còn lại / giới hạn |
 | --- | --- | --- | --- |
 | P00–P03 | Yêu cầu, khảo sát mẫu, skill và tài liệu nền | done | Tài liệu nền đã gọn lại; không thay nghiệm thu nội dung |
-| P10 | Stack, hosting và triển khai | in_progress | Stack/DB đã có; SSL đặt verify-full và chuẩn hóa alias cũ; chưa xác minh deploy public/gói hosting |
+| P10 | Stack, hosting và triển khai | in_progress | Đã đo API public mimacro.vercel.app; bản tối ưu vùng sin1/bootstrap/pool đã push, chờ xác minh deploy và đo lại public; chưa nghiệm thu gói hosting/vận hành |
 | P11 | App, môi trường, schema/migration và quyền cơ bản | done | DB cấu hình đã áp 001–004 |
 | P12 | Parser Frank và mẫu đối chiếu | done | Đủ 1.741 câu/key; không phải kiểm định học thuật toàn bộ |
 | P13 | Parser đề nhiều phần, bảng, OMML, ảnh | in_progress | Frank giữ bảng/ảnh/sup/sub; CLC/OMML/nhiều đề chưa làm |
@@ -40,7 +40,7 @@ Có 10 nguồn Frank/1.741 câu, 1.739 đủ điều kiện cấu trúc và 2 ch
 | P40 | Gói, quyền và hạn mức cấu hình | todo | O04 |
 | P41 | SePay, đơn hàng và đối soát | todo | P40/O09; chống xử lý trùng |
 | P42 | Admin người dùng/jobs/chi phí/lỗi | in_progress | Đã tách admin/chặn làm bài; người dùng/quyền/khóa, đề nháp/xem trước/phát hành, phản hồi/audit và tác vụ nhập chạy thật; màn AI/SePay chỉ báo chưa kết nối, chưa quản trị rubric/chấm lại |
-| P50 | UI theo taste-skill | in_progress | Luồng hiện có đã kiểm ba widths; AI/billing còn thiếu tích hợp |
+| P50 | UI theo taste-skill | in_progress | Đã áp tông kem/serif theo ảnh tham chiếu 02/11; kiểm production 1440/768/390, bộ chọn môn/tạo đề/tài khoản/quản trị và trạng thái tải/trống/lỗi; AI/billing còn thiếu tích hợp |
 | P51 | Kiểm thử quyền, lỗi mạng, tích hợp và UI | in_progress | Có smoke:workspace theo DB cấu hình với fixture riêng; cần hoàn tất theo module |
 | P52 | Deploy, sao lưu/phục hồi và thử nhóm | todo | 30–40 sinh viên; cần bằng chứng vận hành |
 | P53 | Nghiệm thu/phát hành | todo | Giáo sư + chủ sản phẩm; không giảm phạm vi bắt buộc ngầm |

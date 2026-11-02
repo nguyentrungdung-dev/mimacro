@@ -285,14 +285,25 @@ export function App() {
               <Account user={data.user} onChange={load} onError={setError} />
             ) : (
               <>
-                <div className="page-title">
+                <div className="page-title catalog-title">
                   <div>
-                    <h1>Học từ câu hỏi. Hiểu qua lời giải.</h1>
-                    <p>Chọn một bộ câu hỏi gốc hoặc ghép đề mới theo chương.</p>
+                    <h1>
+                      Học từ câu hỏi.
+                      <br />
+                      Hiểu qua lời giải.
+                    </h1>
+                    <p>Ôn Vi mô & Vĩ mô, từ từng chương đến một đề thi.</p>
                   </div>
-                  <Link href="/tao-de" className="button">
-                    Tạo đề mới <ArrowUpRight size={16} />
-                  </Link>
+                  <div className="catalog-title-action">
+                    <p>
+                      Chọn bộ gốc bên dưới,
+                      <br />
+                      hoặc ghép một đề của riêng bạn.
+                    </p>
+                    <Link href="/tao-de" className="button">
+                      Tạo đề mới <ArrowUpRight size={16} />
+                    </Link>
+                  </div>
                 </div>
                 <TrackPicker
                   track={track}
